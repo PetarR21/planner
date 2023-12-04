@@ -1,5 +1,5 @@
 import axios from 'axios';
-const baseUrl = 'http://localhost:3001/list';
+const baseUrl = '/api/items';
 
 const getAll = async () => {
   const response = await axios.get(baseUrl);
