@@ -1,35 +1,50 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useEffect, useState } from 'react';
+import List from './components/List';
+import NewItem from './components/NewItem';
+import Notification from './components/Notification';
+import itemService from './services/items';
 
-function App() {
-  const [count, setCount] = useState(0)
+const App = () => {
+  const [list, setList] = useState([]);
+  const [notification, setNotification] = useState(null);
+
+  useEffect(() => {
+    itemService.getAll().then((initialList) => setList(initialList));
+  }, []);
+
+  const showNotification = (message, type) => {
+    setNotification({ message, type });
+    setTimeout(() => {
+      setNotification(null);
+    }, 4000);
+  };
+
+  const addItem = async (title) => {
+    const newItem = await itemService.create(title);
+    setList(list.concat(newItem));
+    showNotification(`added new item '${title}'`, 'success');
+  };
+
+  const removeItem = async (item) => {
+    await itemService.remove(item.id);
+    showNotification(`removed item '${item.title}'`, 'success');
+    setList(list.filter((i) => i.id !== item.id));
+  };
+
+  const updateItem = async (item) => {
+    const updatedItem = await itemService.update(item);
+    showNotification(`updated item '${item.title}'`, 'success');
+    setList(list.map((i) => (i.id === item.id ? updatedItem : i)));
+  };
 
   return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
-}
+    <div>
+      <h1>My Planner</h1>
+      <Notification notification={notification} />
+      <List list={list} removeItem={removeItem} updateItem={updateItem} />
+      <NewItem addItem={addItem} />
+    </div>
+  );
+};
 
-export default App
+export default App;
