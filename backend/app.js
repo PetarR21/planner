@@ -5,6 +5,8 @@ const mongoose = require('mongoose');
 const app = express();
 const config = require('./utils/config');
 const itemsRouter = require('./controllers/items');
+const usersRouter = require('./controllers/users');
+const loginRouter = require('./controllers/login');
 const middleware = require('./utils/middleware');
 const logger = require('./utils/logger');
 
@@ -24,6 +26,8 @@ app.use(express.static('dist'));
 app.use(middleware.requestLogger);
 
 app.use('/api/items', itemsRouter);
+app.use('/api/users', usersRouter);
+app.use('/api/login', loginRouter);
 
 app.use(middleware.uknownEndpoint);
 app.use(middleware.errorHandler);

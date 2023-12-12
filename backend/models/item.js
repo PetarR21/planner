@@ -8,6 +8,10 @@ const itemSchema = new mongoose.Schema({
   completed: {
     type: Boolean,
   },
+  user: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+  },
 });
 
 itemSchema.set('toJSON', {

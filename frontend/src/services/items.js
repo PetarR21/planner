@@ -1,26 +1,47 @@
 import axios from 'axios';
 const baseUrl = '/api/items';
 
+let token = null;
+
+const setToken = (newToken) => {
+  token = `bearer ${newToken}`;
+};
+
 const getAll = async () => {
-  const response = await axios.get(baseUrl);
+  const config = {
+    headers: { Authorization: token },
+  };
+  const response = await axios.get(baseUrl, config);
   return response.data;
 };
 
 const create = async (title) => {
-  const response = await axios.post(baseUrl, { title, completed: false });
+  const config = {
+    headers: { Authorization: token },
+  };
+  const response = await axios.post(baseUrl, { title, completed: false }, config);
   return response.data;
 };
 
 const update = async (item) => {
-  const response = await axios.put(`${baseUrl}/${item.id}`, {
-    ...item,
-    completed: !item.completed,
-  });
+  const config = {
+    headers: { Authorization: token },
+  };
+  const response = await axios.put(
+    `${baseUrl}/${item.id}`,
+    {
+      completed: !item.completed,
+    },
+    config
+  );
   return response.data;
 };
 
 const remove = async (id) => {
-  const response = await axios.delete(`${baseUrl}/${id}`);
+  const config = {
+    headers: { Authorization: token },
+  };
+  const response = await axios.delete(`${baseUrl}/${id}`, config);
   return response.data;
 };
 
@@ -29,4 +50,5 @@ export default {
   create,
   update,
   remove,
+  setToken,
 };
